@@ -43,7 +43,7 @@ class ConfigService {
 
       migrationsTableName: 'migration',
 
-      migrations: ['src/migration/*.ts'],
+      migrations: ['dist/migration/*.ts'],
 
       cli: {
         migrationsDir: 'src/migration',

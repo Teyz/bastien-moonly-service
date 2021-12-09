@@ -10,7 +10,7 @@
   ],
   "migrationsTableName": "migration",
   "migrations": [
-    "src/migration/*.ts"
+    "dist/migration/*.ts"
   ],
   "cli": {
     "migrationsDir": "src/migration"
