@@ -12,7 +12,6 @@ export class CryptosController {
     return await this.cryptoService.getAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   public async initCryptoDB() {
     return await this.cryptoService.initCryptoDB();
