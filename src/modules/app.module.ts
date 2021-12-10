@@ -6,7 +6,10 @@ import { configService } from '../config/config.service';
 import { CryptoModule } from './cryptos/cryptos.module';
 
 @Module({
-  imports: [CryptoModule,TypeOrmModule.forRoot(configService.getTypeOrmConfig())],
+  imports: [
+    CryptoModule,
+    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
