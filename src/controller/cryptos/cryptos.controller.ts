@@ -12,7 +12,7 @@ export class CryptosController {
   }
 
   @Post()
-  async initCryptoDB() {
+  public async initCryptoDB() {
     return await this.cryptoService.initCryptoDB();
   }
 }
