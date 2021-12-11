@@ -10,9 +10,4 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
-  @Get(':id')
-  show(@Param('id') id: string) {
-    return this.usersService.showById(+id);
-  }
 }

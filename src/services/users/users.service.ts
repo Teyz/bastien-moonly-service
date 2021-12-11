@@ -15,7 +15,9 @@ export class UsersService {
   async showById(id: number): Promise<User> {
     const user = await this.findById(id);
 
+    delete user.id;
     delete user.password;
+    delete user.updatedAt;
     return user;
   }
 
