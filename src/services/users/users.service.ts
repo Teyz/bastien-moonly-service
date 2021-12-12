@@ -32,4 +32,15 @@ export class UsersService {
       },
     });
   }
+
+  async saveorupdateRefreshToke(
+    refreshToken: string,
+    id: string,
+    refreshtokenexpires,
+  ) {
+    await User.update(id, {
+      refreshtoken: refreshToken,
+      refreshtokenexpires,
+    });
+  }
 }
