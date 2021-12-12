@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const randtoken = require('rand-token');
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthLoginDto } from 'src/model/dto/auth-login.dto';
@@ -23,6 +25,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
+      refreshToken: await this.generateRefreshToken(user.id),
     };
   }
 
@@ -41,5 +44,17 @@ export class AuthService {
     const user = await this.usersService.findById(userId);
 
     return user;
+  }
+
+  async generateRefreshToken(userId): Promise<string> {
+    const refreshToken = randtoken.generate(16);
+    const expirydate = new Date();
+    expirydate.setDate(expirydate.getDate() + 6);
+    await this.usersService.saveorupdateRefreshToke(
+      refreshToken,
+      userId,
+      expirydate,
+    );
+    return refreshToken;
   }
 }
