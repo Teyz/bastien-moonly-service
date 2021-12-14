@@ -18,6 +18,10 @@ export class CryptosService {
       .then((cryptos) => cryptos.map((e) => CryptoDTO.fromEntity(e)));
   }
 
+  public async findById(id: number) {
+    return await this.repo.findOne(id);
+  }
+
   public async findByName(name: string): Promise<Crypto | null> {
     return await this.repo.findOne({ name: name });
   }
@@ -91,5 +95,12 @@ export class CryptosService {
       .then(
         (cryptos) => cryptos.map((e) => CryptoDTO.fromEntity(e)).length > 0,
       );
+  }
+
+  async addBookmarkedCrypto(id: number) {
+    const crypto = await this.findById(id);
+    await this.repo.update(id, crypto);
+
+    return true;
   }
 }
