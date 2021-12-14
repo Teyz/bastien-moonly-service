@@ -1,9 +1,19 @@
+import { CryptosService } from 'src/services/cryptos/cryptos.service';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/model/dto/user.dto';
+import { Crypto } from 'src/model/entities/crypto.entity';
 import { User } from 'src/model/entities/user.entity';
+import { Repository } from 'typeorm';
+import { CryptoDTO } from 'src/model/dto/crypto.dto';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(Crypto) private readonly cryptoRepo: Repository<Crypto>,
+    private cryptoService: CryptosService,
+  ) {}
+
   async create(createUserDto: CreateUserDto) {
     const user = User.create(createUserDto);
     await user.save();
@@ -42,5 +52,23 @@ export class UsersService {
       refreshtoken: refreshToken,
       refreshtokenexpires,
     });
+  }
+
+  async addBookmarkedCrypto(id: number, userId: number) {
+    const crypto = await this.cryptoService.findById(id);
+    const allBookmarked = await User.find({ relations: ['bookmarkedCryptos'] });
+
+    const allBookmarkedCrypto = allBookmarked[0].bookmarkedCryptos;
+
+    allBookmarkedCrypto.push(crypto);
+
+    await User.save(allBookmarked);
+
+    return true;
+  }
+
+  async getAllBookmarkedCryptos() {
+    const user = await User.find({ relations: ['bookmarkedCryptos'] });
+    return user[0].bookmarkedCryptos;
   }
 }

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity({ name: 'crypto' })
 export class Crypto {
@@ -25,4 +26,7 @@ export class Crypto {
 
   @Column({ type: 'varchar', length: 300 })
   symbol: string;
+
+  @ManyToMany(() => User, (user: User) => user.bookmarkedCryptos)
+  public users: User[];
 }

@@ -4,10 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Crypto } from './crypto.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -36,6 +39,10 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   refreshtokenexpires: string;
+
+  @ManyToMany(() => Crypto, (crypto: Crypto) => crypto.users)
+  @JoinTable()
+  public bookmarkedCryptos: Crypto[];
 
   @BeforeInsert()
   async hashPassword() {
