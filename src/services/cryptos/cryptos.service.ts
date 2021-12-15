@@ -4,12 +4,13 @@ import { Crypto } from '../../model/entities/crypto.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { Observable } from 'rxjs';
-
+import { AlgoliaService } from 'nestjs-algoliasearch-2';
 @Injectable()
 export class CryptosService {
   constructor(
     @InjectRepository(Crypto) private readonly repo: Repository<Crypto>,
     private httpService: HttpService,
+    private readonly algoliaService: AlgoliaService,
   ) {}
 
   public async getAll(): Promise<CryptoDTO[]> {
@@ -66,6 +67,7 @@ export class CryptosService {
       if (!(await this.isDatabaseInitiated())) {
         await this.insert(crypto);
       } else {
+        this.saveObjectToIndex(crypto);
         await this.update(crypto.name, crypto.sparkline);
       }
     });
@@ -102,5 +104,21 @@ export class CryptosService {
     await this.repo.update(id, crypto);
 
     return true;
+  }
+
+  async saveObjectToIndex(objectToSave: any) {
+    const indexName = 'moonly';
+    const index = this.algoliaService.initIndex(indexName);
+
+    await index.saveObject(objectToSave, {
+      autoGenerateObjectIDIfNotExist: true,
+    });
+  }
+
+  async algoliaSearch(search: string) {
+    const indexName = 'moonly';
+    const index = this.algoliaService.initIndex(indexName);
+
+    return await index.search(search);
   }
 }
