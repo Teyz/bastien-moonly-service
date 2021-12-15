@@ -1,3 +1,4 @@
+import { UpdateProfileDTO } from './../../model/dto/user.dto';
 import {
   Controller,
   Get,
@@ -6,6 +7,7 @@ import {
   Param,
   Req,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
 import { CreateUserDto } from 'src/model/dto/user.dto';
@@ -20,10 +22,19 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  updateProfile(@Param() params, @Body() updateProfileDTO: UpdateProfileDTO) {
+    console.log('ici');
+
+    return this.usersService.updateProfile(params.id, updateProfileDTO);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  addBookmarkedCrypto(@Param() params, @Req() req) {
-    return this.usersService.addBookmarkedCrypto(params.id, req.user.userId);
+  addBookmarkedCrypto(@Param() params) {
+    console.log('test');
+    return this.usersService.addBookmarkedCrypto(params.id);
   }
 
   @UseGuards(JwtAuthGuard)

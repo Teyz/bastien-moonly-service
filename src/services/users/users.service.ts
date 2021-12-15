@@ -1,3 +1,4 @@
+import { UpdateProfileDTO } from './../../model/dto/user.dto';
 import { CryptosService } from 'src/services/cryptos/cryptos.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -54,7 +55,26 @@ export class UsersService {
     });
   }
 
-  async addBookmarkedCrypto(id: number, userId: number) {
+  async updateProfile(
+    profile_id: string,
+    data: UpdateProfileDTO,
+  ): Promise<any> {
+    try {
+      await User.update(profile_id, data);
+
+      return {
+        success: true,
+        message: 'Successfully updated profile',
+      };
+    } catch (err) {
+      return {
+        error: true,
+        message: 'Payload inccorect !',
+      };
+    }
+  }
+
+  async addBookmarkedCrypto(id: number) {
     const crypto = await this.cryptoService.findById(id);
     const allBookmarked = await User.find({ relations: ['bookmarkedCryptos'] });
 
