@@ -15,3 +15,13 @@ export class UserDto {
   @IsString()
   username: string;
 }
+export class UpdateProfileDTO {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  username: string;
+
+  @IsNotEmpty()
+  password: string;
+}
