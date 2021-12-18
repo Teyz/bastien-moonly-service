@@ -5,6 +5,7 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { Observable } from 'rxjs';
 import { AlgoliaService } from 'nestjs-algoliasearch-2';
+
 @Injectable()
 export class CryptosService {
   constructor(
@@ -120,5 +121,21 @@ export class CryptosService {
     const index = this.algoliaService.initIndex(indexName);
 
     return await index.search(search);
+  }
+
+  async filterByPrice(filter: string) {
+    return await this.repo.find({
+      order: {
+        current_price: filter === 'desc' ? 'DESC' : 'ASC',
+      },
+    });
+  }
+
+  async filterByName(filter: string) {
+    return await this.repo.find({
+      order: {
+        name: filter === 'desc' ? 'DESC' : 'ASC',
+      },
+    });
   }
 }
