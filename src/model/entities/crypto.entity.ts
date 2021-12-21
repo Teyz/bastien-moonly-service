@@ -18,8 +18,8 @@ export class Crypto {
   @Column({ type: 'varchar', length: 300 })
   iconUrl: string;
 
-  @Column({ type: 'float' })
-  percentage: number;
+  @Column({ type: 'varchar', nullable: true })
+  percentage: string;
 
   @Column({ type: 'boolean' })
   isIncrease: boolean;

@@ -38,7 +38,11 @@ export class CryptosService {
     cryptoEntity.current_price = price;
     cryptoEntity.symbol = symbol;
     cryptoEntity.past_price = sparkline;
-    cryptoEntity.percentage = this.getPercentage(sparkline, cryptoEntity);
+    cryptoEntity.percentage = this.getPercentage(
+      sparkline,
+      cryptoEntity,
+    ).toFixed(2);
+
     await this.repo.save(cryptoEntity);
   }
 
