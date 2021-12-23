@@ -26,8 +26,8 @@ export class CryptoDTO implements Readonly<CryptoDTO> {
   isIncrease: boolean;
 
   @ApiProperty()
-  @IsNumber()
-  percentage: number;
+  @IsString()
+  percentage: string;
 
   @ApiProperty()
   @IsArray()

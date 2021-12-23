@@ -28,4 +28,14 @@ export class CryptosController {
   getSearch(@Param() params, @Req() req) {
     return this.cryptoService.algoliaSearch(params.search);
   }
+
+  @Get('price/:filter')
+  filterByPrice(@Param() params, @Req() req) {
+    return this.cryptoService.filterByPrice(params.filter);
+  }
+
+  @Get('name/:filter')
+  filterByName(@Param() params, @Req() req) {
+    return this.cryptoService.filterByName(params.filter);
+  }
 }
