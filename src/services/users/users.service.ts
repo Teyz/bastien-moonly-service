@@ -44,6 +44,14 @@ export class UsersService {
     });
   }
 
+  async findByUsername(username: string) {
+    return await User.findOne({
+      where: {
+        username: username,
+      },
+    });
+  }
+
   async saveorupdateRefreshToke(
     refreshToken: string,
     id: string,
