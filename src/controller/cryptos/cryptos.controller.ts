@@ -8,8 +8,8 @@ export class CryptosController {
   constructor(private cryptoService: CryptosService) {}
 
   @Get()
-  public async getAll(): Promise<CryptoDTO[]> {
-    return await this.cryptoService.getAll();
+  public async getAll() {
+    return await this.cryptoService.filterByRank();
   }
 
   @Post()

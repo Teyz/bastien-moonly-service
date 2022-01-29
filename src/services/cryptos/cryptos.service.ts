@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Crypto } from '../../model/entities/crypto.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
-import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AlgoliaService } from 'nestjs-algoliasearch-2';
+import axios from 'axios';
 
 @Injectable()
 export class CryptosService {
@@ -30,70 +31,62 @@ export class CryptosService {
 
   private async insert(cryptoDetails) {
     const cryptoEntity: Crypto = this.repo.create();
-    const { name, iconUrl, symbol, price, sparkline, percentage } =
-      cryptoDetails;
+    const { name, symbol, quote, tags, cmc_rank, id } = cryptoDetails;
+    const percentage = quote.USD.percent_change_1h;
+    const isIncrease = Math.sign(percentage);
+    cryptoEntity.cmc_rank = cmc_rank;
     cryptoEntity.name = name;
-    cryptoEntity.iconUrl = iconUrl;
-    cryptoEntity.percentage = percentage;
-    cryptoEntity.current_price = price;
+    cryptoEntity.icon_url = `https://s2.coinmarketcap.com/static/img/coins/64x64/${id}.png`;
+    cryptoEntity.isIncrease = isIncrease > 0 ? true : false;
+    cryptoEntity.percentage = percentage.toFixed(2);
+    cryptoEntity.current_price = quote.USD.price.toFixed(4);
+    cryptoEntity.past_price = [quote.USD.price.toFixed(4)];
     cryptoEntity.symbol = symbol;
-    cryptoEntity.past_price = sparkline;
-    cryptoEntity.percentage = this.getPercentage(
-      sparkline,
-      cryptoEntity,
-    ).toFixed(2);
+    cryptoEntity.tags = tags;
 
     await this.repo.save(cryptoEntity);
   }
 
   private async update(name: string, newValue) {
-    await this.repo.update({ name: name }, { past_price: newValue });
+    const crypto = await this.findByName(name);
+    crypto.past_price.push(newValue);
+    await this.repo.update(
+      { name: name },
+      {
+        current_price: newValue.toFixed(4),
+        past_price: crypto.past_price,
+      },
+    );
   }
 
   private async getCryptosData() {
     const headersRequest = {
-      'Content-Type': 'application/json', // afaik this one is not needed
-      'x-access-token': `coinrankingde79b56531fa0c2ab0242b702af9fa881304242bf5f5f5c6`,
+      'Content-Type': 'application/json',
+      'X-CMC_PRO_API_KEY': `909a9b9f-afa8-4f32-8f24-f77224716cbe`,
     };
-    const response = await this.httpService
-      .get('https://api.coinranking.com/v2/coins', { headers: headersRequest })
-      .toPromise()
-      .catch((err) => {
-        throw new HttpException(err.response.data, err.response.status);
-      });
+    const response = await axios.get(
+      'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
+      { headers: headersRequest },
+    );
 
-    return response.data;
+    return response.data.data;
   }
 
   public async initCryptoDB() {
     const cryptosData = await this.getCryptosData();
-    const cryptosDataCoins = cryptosData.data.coins;
+    const cryptosDataCoins = cryptosData;
     cryptosDataCoins.map(async (crypto) => {
       if (!(await this.isDatabaseInitiated())) {
+        this.saveObjectToIndex(crypto);
         await this.insert(crypto);
       } else {
-        this.saveObjectToIndex(crypto);
-        await this.update(crypto.name, crypto.sparkline);
+        await this.update(crypto.name, crypto.quote.USD.price);
       }
     });
     return {
       code: 200,
       message: 'Database successfully initiated or updated.',
     };
-  }
-
-  private getPercentage(sparkline: number[], cryptoEntity: Crypto) {
-    const sparklineLength: number = sparkline.length;
-    const lastPrice: number = sparkline[sparklineLength - 2];
-    const currentPrice: number = sparkline[sparklineLength - 1];
-    const priceDifference: number = currentPrice - lastPrice;
-    const percentage: number = (priceDifference / lastPrice) * 100;
-    if (percentage > 0) {
-      cryptoEntity.isIncrease = true;
-      return percentage;
-    }
-    cryptoEntity.isIncrease = false;
-    return percentage;
   }
 
   private async isDatabaseInitiated() {
@@ -139,6 +132,14 @@ export class CryptosService {
     return await this.repo.find({
       order: {
         name: filter === 'desc' ? 'DESC' : 'ASC',
+      },
+    });
+  }
+
+  async filterByRank() {
+    return await this.repo.find({
+      order: {
+        cmc_rank: 'ASC',
       },
     });
   }

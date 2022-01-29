@@ -23,9 +23,6 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
-  @Column({ nullable: true })
-  description: string;
-
   @Column()
   password: string;
 
@@ -37,10 +34,10 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   refreshtoken: string;
 
-  @Column()
+  @Column({ nullable: true })
   refreshtokenexpires: string;
 
   @ManyToMany(() => Crypto, (crypto: Crypto) => crypto.users)

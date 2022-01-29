@@ -6,26 +6,32 @@ export class Crypto {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'int', nullable: true })
+  cmc_rank: number;
+
   @Column({ type: 'varchar', length: 300 })
   name: string;
 
-  @Column({ type: 'float' })
-  current_price!: number;
-
-  @Column({ type: 'float', array: true })
-  past_price!: number[];
-
   @Column({ type: 'varchar', length: 300 })
-  iconUrl: string;
+  icon_url: string;
+
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  symbol: string;
+
+  @Column({ type: 'float', nullable: true })
+  current_price: number;
+
+  @Column({ type: 'float', array: true, nullable: true })
+  past_price: number[];
 
   @Column({ type: 'varchar', nullable: true })
   percentage: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', nullable: true })
   isIncrease: boolean;
 
-  @Column({ type: 'varchar', length: 300 })
-  symbol: string;
+  @Column('text', { array: true, nullable: true })
+  tags: string[];
 
   @ManyToMany(() => User, (user: User) => user.bookmarkedCryptos)
   public users: User[];
