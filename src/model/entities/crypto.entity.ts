@@ -1,6 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { User } from './user.entity';
 
+export interface Percentage {
+  percent_change_1h: number;
+  percent_change_24h: number;
+  percent_change_7d: number;
+}
+
 @Entity({ name: 'crypto' })
 export class Crypto {
   @PrimaryGeneratedColumn('uuid')
@@ -32,6 +38,9 @@ export class Crypto {
 
   @Column('text', { array: true, nullable: true })
   tags: string[];
+
+  @Column('text', { nullable: true })
+  percentages: Percentage;
 
   @ManyToMany(() => User, (user: User) => user.bookmarkedCryptos)
   public users: User[];

@@ -1,6 +1,6 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Crypto } from '../../model/entities/crypto.entity';
+import { Crypto, Percentage } from '../../model/entities/crypto.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { map } from 'rxjs/operators';
@@ -43,18 +43,28 @@ export class CryptosService {
     cryptoEntity.past_price = [quote.USD.price.toFixed(4)];
     cryptoEntity.symbol = symbol;
     cryptoEntity.tags = tags;
+    cryptoEntity.percentages = await this.setPercents(cryptoDetails);
 
     await this.repo.save(cryptoEntity);
   }
 
-  private async update(name: string, newValue) {
-    const crypto = await this.findByName(name);
-    crypto.past_price.push(newValue);
+  private async setPercents(crypto): Promise<Percentage> {
+    return {
+      percent_change_1h: crypto.quote.USD.percent_change_1h,
+      percent_change_24h: crypto.quote.USD.percent_change_24h,
+      percent_change_7d: crypto.quote.USD.percent_change_7d,
+    };
+  }
+
+  private async update(cryptoDetails) {
+    const crypto = await this.findByName(cryptoDetails.name);
+    crypto.past_price.push(cryptoDetails.quote.USD.price);
     await this.repo.update(
-      { name: name },
+      { name: cryptoDetails.name },
       {
-        current_price: newValue.toFixed(4),
+        current_price: cryptoDetails.quote.USD.price.toFixed(4),
         past_price: crypto.past_price,
+        percentages: await this.setPercents(cryptoDetails),
       },
     );
   }
@@ -80,7 +90,7 @@ export class CryptosService {
         this.saveObjectToIndex(crypto);
         await this.insert(crypto);
       } else {
-        await this.update(crypto.name, crypto.quote.USD.price);
+        await this.update(crypto);
       }
     });
     return {
