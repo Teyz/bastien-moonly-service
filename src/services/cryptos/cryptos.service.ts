@@ -58,7 +58,9 @@ export class CryptosService {
 
   private async update(cryptoDetails) {
     const crypto = await this.findByName(cryptoDetails.name);
-    crypto.past_price.push(cryptoDetails.quote.USD.price);
+    if (crypto.past_price != undefined) {
+      crypto.past_price.push(cryptoDetails.quote.USD.price);
+    }
     await this.repo.update(
       { name: cryptoDetails.name },
       {

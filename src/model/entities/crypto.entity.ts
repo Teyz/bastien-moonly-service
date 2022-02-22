@@ -39,7 +39,7 @@ export class Crypto {
   @Column('text', { array: true, nullable: true })
   tags: string[];
 
-  @Column('text', { nullable: true })
+  @Column('json', { nullable: true })
   percentages: Percentage;
 
   @ManyToMany(() => User, (user: User) => user.bookmarkedCryptos)

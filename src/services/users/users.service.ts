@@ -16,7 +16,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = User.create(createUserDto);
+    console.log(createUserDto);
+
+    const user = await User.create(createUserDto);
     await user.save();
 
     delete user.password;

@@ -8,8 +8,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*',
-
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
+    allowedHeaders: '*',
   });
 
   if (!configService.isProduction()) {
