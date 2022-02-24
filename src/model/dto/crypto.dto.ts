@@ -8,6 +8,11 @@ type Percentage = {
   percent_change_7d: number;
 };
 
+type CryptoPastPrice = {
+  price: number;
+  date: Date;
+};
+
 export class CryptoDTO implements Readonly<CryptoDTO> {
   @ApiProperty()
   @IsNumber()
@@ -35,7 +40,7 @@ export class CryptoDTO implements Readonly<CryptoDTO> {
 
   @ApiProperty()
   @IsArray()
-  past_price: number[];
+  past_price: CryptoPastPrice[];
 
   @ApiProperty()
   @IsNumber()

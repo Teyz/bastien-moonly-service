@@ -1,6 +1,10 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Crypto, Percentage } from '../../model/entities/crypto.entity';
+import {
+  Crypto,
+  CryptoPastPrice,
+  Percentage,
+} from '../../model/entities/crypto.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { map } from 'rxjs/operators';
@@ -40,7 +44,9 @@ export class CryptosService {
     cryptoEntity.isIncrease = isIncrease > 0 ? true : false;
     cryptoEntity.percentage = percentage.toFixed(2);
     cryptoEntity.current_price = quote.USD.price.toFixed(4);
-    cryptoEntity.past_price = [quote.USD.price.toFixed(4)];
+    cryptoEntity.past_price = [
+      { price: quote.USD.price.toFixed(4), date: new Date() },
+    ];
     cryptoEntity.symbol = symbol;
     cryptoEntity.tags = tags;
     cryptoEntity.percentages = await this.setPercents(cryptoDetails);
@@ -58,14 +64,16 @@ export class CryptosService {
 
   private async update(cryptoDetails) {
     const crypto = await this.findByName(cryptoDetails.name);
-    if (crypto.past_price != undefined) {
-      crypto.past_price.push(cryptoDetails.quote.USD.price);
-    }
+    const past_price = crypto.past_price;
+    past_price.push({
+      price: cryptoDetails.quote.USD.price.toFixed(4),
+      date: new Date(),
+    });
     await this.repo.update(
       { name: cryptoDetails.name },
       {
         current_price: cryptoDetails.quote.USD.price.toFixed(4),
-        past_price: crypto.past_price,
+        past_price: past_price,
         percentages: await this.setPercents(cryptoDetails),
       },
     );

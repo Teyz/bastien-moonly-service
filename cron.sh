@@ -1,0 +1,1 @@
+curl https://dev.moonly.gg/cryptos

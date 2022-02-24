@@ -7,6 +7,11 @@ export interface Percentage {
   percent_change_7d: number;
 }
 
+export interface CryptoPastPrice {
+  price: number;
+  date: Date;
+}
+
 @Entity({ name: 'crypto' })
 export class Crypto {
   @PrimaryGeneratedColumn('uuid')
@@ -27,8 +32,8 @@ export class Crypto {
   @Column({ type: 'float', nullable: true })
   current_price: number;
 
-  @Column({ type: 'float', array: true, nullable: true })
-  past_price: number[];
+  @Column('json', { nullable: true })
+  past_price: CryptoPastPrice[];
 
   @Column({ type: 'varchar', nullable: true })
   percentage: string;
