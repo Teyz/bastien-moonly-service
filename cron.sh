@@ -1,3 +1,3 @@
 #!/bin/bash 
-url=”https://dev.moonly.gg/cryptos“
-curl ${url}
+url=https://dev.moonly.gg/cryptos
+curl -u -H --data ${url}
