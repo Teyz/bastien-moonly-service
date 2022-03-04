@@ -40,6 +40,7 @@
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.2",
     "dotenv": "^10.0.0",
+    "nestjs-algolia": "^4.0.0",
     "nestjs-algoliasearch-2": "^0.1.1",
     "passport": "^0.5.0",
     "passport-jwt": "^4.0.0",
@@ -92,5 +93,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "engines" : { "node" : ">=14" }
+  "engines": {
+    "node": ">=14"
+  }
 }

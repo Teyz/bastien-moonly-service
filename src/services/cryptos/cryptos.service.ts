@@ -8,8 +8,9 @@ import {
 import { QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { map } from 'rxjs/operators';
-import { AlgoliaService } from 'nestjs-algoliasearch-2';
+import { AlgoliaService } from 'nestjs-algolia';
 import axios from 'axios';
+import algoliasearch from 'algoliasearch';
 
 @Injectable()
 export class CryptosService {
@@ -50,6 +51,10 @@ export class CryptosService {
     cryptoEntity.symbol = symbol;
     cryptoEntity.tags = tags;
     cryptoEntity.percentages = await this.setPercents(cryptoDetails);
+    const cryptoName = {
+      name: cryptoEntity.name,
+    };
+    await this.addRecordToIndex(cryptoName);
 
     await this.repo.save(cryptoEntity);
   }
@@ -97,7 +102,6 @@ export class CryptosService {
     const cryptosDataCoins = cryptosData;
     cryptosDataCoins.map(async (crypto) => {
       if (!(await this.isDatabaseInitiated())) {
-        this.saveObjectToIndex(crypto);
         await this.insert(crypto);
       } else {
         await this.update(crypto);
@@ -124,13 +128,10 @@ export class CryptosService {
     return true;
   }
 
-  async saveObjectToIndex(objectToSave: any) {
-    const indexName = 'moonly';
-    const index = this.algoliaService.initIndex(indexName);
+  async addRecordToIndex(record: any) {
+    const index = this.algoliaService.initIndex('moonly');
 
-    await index.saveObject(objectToSave, {
-      autoGenerateObjectIDIfNotExist: true,
-    });
+    await index.addObject(record);
   }
 
   async algoliaSearch(search: string) {
@@ -150,9 +151,7 @@ export class CryptosService {
 
   async filterByName(filter: string) {
     return await this.repo.find({
-      order: {
-        name: filter === 'desc' ? 'DESC' : 'ASC',
-      },
+      name: filter,
     });
   }
 

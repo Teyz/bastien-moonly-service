@@ -23,7 +23,6 @@ export class CryptosController {
     return this.cryptoService.addBookmarkedCrypto(params.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('search/:search')
   getSearch(@Param() params, @Req() req) {
     return this.cryptoService.algoliaSearch(params.search);
