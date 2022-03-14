@@ -6,7 +6,6 @@ import { CreateUserDto } from 'src/model/dto/user.dto';
 import { Crypto } from 'src/model/entities/crypto.entity';
 import { User } from 'src/model/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CryptoDTO } from 'src/model/dto/crypto.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,8 +15,6 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-
     const user = await User.create(createUserDto);
     await user.save();
 
@@ -84,21 +81,82 @@ export class UsersService {
     }
   }
 
-  async addBookmarkedCrypto(id: number) {
+  async addBookmarkedCrypto(id: number, userId: number): Promise<any> {
     const crypto = await this.cryptoService.findById(id);
-    const allBookmarked = await User.find({ relations: ['bookmarkedCryptos'] });
+    const user = await this.findById(userId);
 
-    const allBookmarkedCrypto = allBookmarked[0].bookmarkedCryptos;
+    const isAlreadyBookmarked = await this.isAlreadyBookmarked(crypto, userId);
 
-    allBookmarkedCrypto.push(crypto);
+    const userBookmarkedCryptos = await User.find({
+      where: {
+        id: userId,
+      },
+      relations: ['bookmarkedCryptos'],
+    });
+    const allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
 
-    await User.save(allBookmarked);
+    if (isAlreadyBookmarked) {
+      await this.removeBookmarkedCrypto(crypto.id, allBookmarkedCryptos, user);
+      return {
+        success: true,
+        message: 'This crypto has been unbookmarked.',
+      };
+    } else {
+      allBookmarkedCryptos.push(crypto);
 
-    return true;
+      user.bookmarkedCryptos = allBookmarkedCryptos;
+
+      User.save(user);
+
+      return {
+        success: true,
+        message: 'This crypto has been bookmarked.',
+      };
+    }
   }
 
-  async getAllBookmarkedCryptos() {
-    const user = await User.find({ relations: ['bookmarkedCryptos'] });
-    return user[0].bookmarkedCryptos;
+  private async removeBookmarkedCrypto(
+    id: string,
+    allBookmarkedCryptos: Crypto[],
+    user: User,
+  ) {
+    const bookmarkedCryptos = allBookmarkedCryptos.filter((crypto) => {
+      return crypto.id !== id.toString();
+    });
+
+    user.bookmarkedCryptos = bookmarkedCryptos;
+
+    User.save(user);
+  }
+
+  private async isAlreadyBookmarked(
+    cryptoToBookmard: Crypto,
+    userId: number,
+  ): Promise<boolean> {
+    const userBookmarkedCryptos = await User.find({
+      where: {
+        id: userId,
+      },
+      relations: ['bookmarkedCryptos'],
+    });
+    const allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
+
+    const isAlreadyBookmarked = allBookmarkedCryptos.map(
+      (cryptoBookmarked: Crypto) => {
+        return cryptoBookmarked.id === cryptoToBookmard.id;
+      },
+    );
+
+    return isAlreadyBookmarked.includes(true);
+  }
+
+  async getAllBookmarkedCryptos(userId: number) {
+    const userBookmarkedCryptos = await User.find({
+      where: {
+        id: userId,
+      },
+      relations: ['bookmarkedCryptos'],
+    });
+    return await userBookmarkedCryptos[0].bookmarkedCryptos;
   }
 }

@@ -17,12 +17,6 @@ export class CryptosController {
     return await this.cryptoService.initCryptoDB();
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('bookmark/:id')
-  addBookmarkedCrypto(@Param() params, @Req() req) {
-    return this.cryptoService.addBookmarkedCrypto(params.id);
-  }
-
   @Get(':cryptoName')
   getCrypto(@Param() params) {
     return this.cryptoService.findByName(params.cryptoName);

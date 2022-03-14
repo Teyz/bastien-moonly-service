@@ -121,13 +121,6 @@ export class CryptosService {
       );
   }
 
-  async addBookmarkedCrypto(id: number) {
-    const crypto = await this.findById(id);
-    await this.repo.update(id, crypto);
-
-    return true;
-  }
-
   async addRecordToIndex(record: any) {
     const index = this.algoliaService.initIndex('moonly');
 

@@ -31,15 +31,14 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  addBookmarkedCrypto(@Param() params) {
-    console.log('test');
-    return this.usersService.addBookmarkedCrypto(params.id);
+  @Post('bookmark')
+  addBookmarkedCrypto(@Body() id: number, @Req() req) {
+    return this.usersService.addBookmarkedCrypto(id, req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAllBookmarkedCryptos() {
-    return this.usersService.getAllBookmarkedCryptos();
+  getAllBookmarkedCryptos(@Req() req) {
+    return this.usersService.getAllBookmarkedCryptos(req.user.userId);
   }
 }
