@@ -94,7 +94,12 @@ export class UsersService {
       },
       relations: ['bookmarkedCryptos'],
     });
-    const allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
+
+    let allBookmarkedCryptos: Crypto[] = [];
+
+    if (userBookmarkedCryptos[0].bookmarkedCryptos !== undefined) {
+      allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
+    }
 
     if (isAlreadyBookmarked) {
       await this.removeBookmarkedCrypto(crypto.id, allBookmarkedCryptos, user);
@@ -140,7 +145,12 @@ export class UsersService {
       },
       relations: ['bookmarkedCryptos'],
     });
-    const allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
+
+    let allBookmarkedCryptos: Crypto[] = [];
+
+    if (userBookmarkedCryptos[0].bookmarkedCryptos !== undefined) {
+      allBookmarkedCryptos = userBookmarkedCryptos[0].bookmarkedCryptos;
+    }
 
     const isAlreadyBookmarked = allBookmarkedCryptos.map(
       (cryptoBookmarked: Crypto) => {
