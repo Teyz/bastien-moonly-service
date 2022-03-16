@@ -151,14 +151,14 @@ export class UsersService {
     return isAlreadyBookmarked.includes(true);
   }
 
-  async getAllBookmarkedCryptos(userId: number) {
+  async getAllBookmarkedCryptos(userId: number): Promise<Crypto[]> {
     const userBookmarkedCryptos = await User.find({
       where: {
         id: userId,
       },
       relations: ['bookmarkedCryptos'],
     });
-    return await userBookmarkedCryptos[0].bookmarkedCryptos;
+    return (await userBookmarkedCryptos[0].bookmarkedCryptos) || [];
   }
 
   async getAllCryptosWithoutBookmarkedOnes(userId: number) {
