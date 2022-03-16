@@ -29,29 +29,28 @@ jobs:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
-        target: "/var/www/moonly-services"
-        script: rm -rf .dist
+        script: rm -rf dist
 
-    # - name: Update dependencies
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: yarn
+    - name: Update dependencies
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: yarn
 
-    # - name: Build
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: yarn build
+    - name: Build
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: yarn build
 
-    # - name: Update pm2 service
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: pm2 reload 0
+    - name: Update pm2 service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: pm2 reload 0
