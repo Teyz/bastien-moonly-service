@@ -21,7 +21,15 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
       with:
         source: "."
-        target: "/var/www/moonly-test"
+        target: "/var/www/moonly-services"
+      
+    - name: Update pm2 service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: cd /var/www/moonly-services
 
     - name: Remove older .dist folder
       uses: appleboy/ssh-action@master
