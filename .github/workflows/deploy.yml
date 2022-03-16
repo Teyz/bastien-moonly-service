@@ -25,10 +25,13 @@ jobs:
 
     - name: Executing remote command
       uses: appleboy/ssh-action@master
-      with:
+      env:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
+      with:
+        source: "."
+        target: "/var/www/moonly-services"
         script: ls
 
     - name: Remove older dist folder
