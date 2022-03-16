@@ -1,0 +1,21 @@
+{
+  "type": "postgres",
+  "host": "127.0.0.1",
+  "port": 5432,
+  "username": "postgres",
+  "password": "root",
+  "database": "moonly",
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "migrationsTableName": "migration",
+  "migrations": [
+    "dist/migration/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/migration"
+  },
+  "ssl": false,
+  "synchronize": true,
+  "migrationsRun": true
+}
