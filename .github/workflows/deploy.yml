@@ -7,8 +7,6 @@ on:
       - master
 
 jobs:
-  only:
-    - master
   build:
 
     runs-on: ubuntu-latest
@@ -26,10 +24,34 @@ jobs:
         source: "."
         target: "/var/www/moonly-services"
 
-    - name: Executing remote command
+    - name: Remove older dist folder
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
-        script: ls
+        script: cd /var/www/moonly-services && rm -rf dist
+
+    - name: Update dependencies
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: cd /var/www/moonly-services && yarn
+
+    - name: Build
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: cd /var/www/moonly-services && yarn build
+
+    - name: Update pm2 service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: pm2 reload 0
