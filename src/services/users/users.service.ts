@@ -6,6 +6,7 @@ import { CreateUserDto } from 'src/model/dto/user.dto';
 import { Crypto } from 'src/model/entities/crypto.entity';
 import { User } from 'src/model/entities/user.entity';
 import { Repository } from 'typeorm';
+import { CryptoDTO } from 'src/model/dto/crypto.dto';
 
 @Injectable()
 export class UsersService {
@@ -158,5 +159,13 @@ export class UsersService {
       relations: ['bookmarkedCryptos'],
     });
     return await userBookmarkedCryptos[0].bookmarkedCryptos;
+  }
+
+  async getAllCryptosWithoutBookmarkedOnes(userId: number) {
+    return await User.createQueryBuilder('user_bookmarked_cryptos_crypto')
+      .select('*')
+      .where('user_bookmarked_cryptos_crypto."userId" = :userId', { userId })
+      .printSql()
+      .getRawMany();
   }
 }

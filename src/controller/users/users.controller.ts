@@ -41,4 +41,12 @@ export class UsersController {
   getAllBookmarkedCryptos(@Req() req) {
     return this.usersService.getAllBookmarkedCryptos(req.user.userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/cryptos')
+  getAllCryptosWithoutBookmarkedOnes(@Req() req) {
+    return this.usersService.getAllCryptosWithoutBookmarkedOnes(
+      req.user.userId,
+    );
+  }
 }
