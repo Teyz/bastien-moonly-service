@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   only:
-  - master
+    - master
   build:
 
     runs-on: ubuntu-latest
