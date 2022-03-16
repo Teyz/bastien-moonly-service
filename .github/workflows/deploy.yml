@@ -13,60 +13,44 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    # - name: Copy repository contents via scp
-    #   uses: appleboy/scp-action@master
-    #   env:
-    #     HOST: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #   with:
-    #     source: "."
-    #     target: "/var/www/moonly-services"
+    - name: Copy repository contents via scp
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+      with:
+        source: "."
+        target: "/var/www/moonly-services"
 
-    - name: Executing remote command
+    - name: Remove older dist folder
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
-        script: cd /var/www/moonly-services && pwd
+        script: cd /var/www/moonly-services && rm -rf dist
 
-    - name: Executing remote command
+    - name: Update dependencies
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
-        script: pwd
+        script: cd /var/www/moonly-services && yarn
 
-    # - name: Remove older dist folder
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: rm -rf dist
+    - name: Build
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: cd /var/www/moonly-services && yarn build
 
-    # - name: Update dependencies
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: yarn
-
-    # - name: Build
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: yarn build
-
-    # - name: Update pm2 service
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     USERNAME: ${{ secrets.USERNAME }}
-    #     KEY: ${{ secrets.SSHKEY }}
-    #     script: pm2 reload 0
+    - name: Update pm2 service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: pm2 reload 0
