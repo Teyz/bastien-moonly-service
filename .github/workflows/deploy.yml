@@ -25,11 +25,10 @@ jobs:
 
     - name: Executing remote command
       uses: appleboy/ssh-action@master
-      env:
+      with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSHKEY }}
-      with:
         source: "."
         target: "/var/www/moonly-services"
         script: ls
