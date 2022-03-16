@@ -1,6 +1,4 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
-import { CryptoDTO } from 'src/model/dto/crypto.dto';
+import { Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { CryptosService } from 'src/services/cryptos/cryptos.service';
 
 @Controller('cryptos')
