@@ -1,16 +1,10 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Crypto,
-  CryptoPastPrice,
-  Percentage,
-} from '../../model/entities/crypto.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Crypto, Percentage } from '../../model/entities/crypto.entity';
+import { Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
-import { map } from 'rxjs/operators';
 import { AlgoliaService } from 'nestjs-algolia';
 import axios from 'axios';
-import algoliasearch from 'algoliasearch';
 
 @Injectable()
 export class CryptosService {
