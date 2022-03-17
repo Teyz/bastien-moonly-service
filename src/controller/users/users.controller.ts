@@ -22,12 +22,10 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Put(':id')
+  @Put()
   @UseGuards(JwtAuthGuard)
-  updateProfile(@Param() params, @Body() updateProfileDTO: UpdateProfileDTO) {
-    console.log('ici');
-
-    return this.usersService.updateProfile(params.id, updateProfileDTO);
+  updateProfile(@Req() req, @Body() updateProfileDTO: UpdateProfileDTO) {
+    return this.usersService.updateProfile(req.user.userId, updateProfileDTO);
   }
 
   @UseGuards(JwtAuthGuard)

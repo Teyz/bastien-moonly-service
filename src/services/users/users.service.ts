@@ -6,7 +6,7 @@ import { CreateUserDto } from 'src/model/dto/user.dto';
 import { Crypto } from 'src/model/entities/crypto.entity';
 import { User } from 'src/model/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CryptoDTO } from 'src/model/dto/crypto.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -63,18 +63,21 @@ export class UsersService {
     });
   }
 
-  async updateProfile(
-    profile_id: string,
-    data: UpdateProfileDTO,
-  ): Promise<any> {
+  async updateProfile(userId: number, data: UpdateProfileDTO): Promise<any> {
     try {
-      await User.update(profile_id, data);
+      await User.update(userId, {
+        username: data.username,
+        email: data.email,
+        password: await bcrypt.hash(data.password, 8),
+      });
 
       return {
         success: true,
         message: 'Successfully updated profile',
       };
     } catch (err) {
+      console.log(err);
+
       return {
         error: true,
         message: 'Payload inccorect !',
