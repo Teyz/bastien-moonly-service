@@ -40,11 +40,11 @@ export class UsersController {
     return this.usersService.getAllBookmarkedCryptos(req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/cryptos')
-  getAllCryptosWithoutBookmarkedOnes(@Req() req) {
-    return this.usersService.getAllCryptosWithoutBookmarkedOnes(
-      req.user.userId,
-    );
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('/cryptos')
+  // getAllCryptosWithoutBookmarkedOnes(@Req() req) {
+  //   return this.usersService.getAllCryptosWithoutBookmarkedOnes(
+  //     req.user.userId,
+  //   );
+  // }
 }

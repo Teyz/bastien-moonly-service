@@ -134,10 +134,10 @@ export class CryptosService {
     return await index.search(search);
   }
 
-  async filterByPrice(filter: string) {
+  async filterByPrice(orderBy: 'ASC' | 'DESC') {
     return await this.repo.find({
       order: {
-        current_price: filter === 'desc' ? 'DESC' : 'ASC',
+        current_price: orderBy || 'DESC',
       },
     });
   }
@@ -148,10 +148,10 @@ export class CryptosService {
     });
   }
 
-  async filterByRank() {
+  async filterByRank(orderBy: 'ASC' | 'DESC') {
     return await this.repo.find({
       order: {
-        cmc_rank: 'ASC',
+        cmc_rank: orderBy || 'ASC',
       },
     });
   }
