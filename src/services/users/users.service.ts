@@ -108,6 +108,7 @@ export class UsersService {
       await this.removeBookmarkedCrypto(crypto.id, allBookmarkedCryptos, user);
       return {
         success: true,
+        type: 0,
         message: 'This crypto has been unbookmarked.',
       };
     } else {
@@ -119,6 +120,7 @@ export class UsersService {
 
       return {
         success: true,
+        type: 1,
         message: 'This crypto has been bookmarked.',
       };
     }
@@ -172,13 +174,5 @@ export class UsersService {
       relations: ['bookmarkedCryptos'],
     });
     return (await userBookmarkedCryptos[0].bookmarkedCryptos) || [];
-  }
-
-  async getAllCryptosWithoutBookmarkedOnes(userId: number) {
-    return await User.createQueryBuilder('user_bookmarked_cryptos_crypto')
-      .select('*')
-      .where('user_bookmarked_cryptos_crypto."userId" = :userId', { userId })
-      .printSql()
-      .getRawMany();
   }
 }

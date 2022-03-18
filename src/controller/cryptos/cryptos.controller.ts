@@ -5,9 +5,9 @@ import { CryptosService } from 'src/services/cryptos/cryptos.service';
 export class CryptosController {
   constructor(private cryptoService: CryptosService) {}
 
-  @Get()
-  public async getAll() {
-    return await this.cryptoService.filterByRank();
+  @Get(':orderBy')
+  public async getAll(@Param() params) {
+    return await this.cryptoService.filterByRank(params.orderBy);
   }
 
   @Post()
