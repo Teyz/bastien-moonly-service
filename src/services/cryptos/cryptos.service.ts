@@ -157,12 +157,10 @@ export class CryptosService {
   }
 
   async getAllTags() {
-    const allTags = [];
+    let allTags = [];
     const allCryptos = await this.repo.find();
     allCryptos.forEach((crypto) => {
-      crypto.tags.forEach((tag) => {
-        allTags.push(tag);
-      });
+      allTags = [...allTags, ...crypto.tags];
     });
 
     return [...new Set(allTags)];
