@@ -155,4 +155,27 @@ export class CryptosService {
       },
     });
   }
+
+  async getAllTags() {
+    const allTags = [];
+    const allCryptos = await this.repo.find();
+    allCryptos.forEach((crypto) => {
+      crypto.tags.forEach((tag) => {
+        allTags.push(tag);
+      });
+    });
+
+    return [...new Set(allTags)];
+  }
+
+  async getPercentsByDate(name: string, startDate: string, endDate: string) {
+    const crypto: Crypto = await this.repo.findOne({ name: name });
+    const cryptoPercents = crypto.past_price;
+    return cryptoPercents.filter((percent) => {
+      return (
+        new Date(percent.date).getTime() > new Date(startDate).getTime() &&
+        new Date(percent.date).getTime() < new Date(endDate).getTime()
+      );
+    });
+  }
 }
