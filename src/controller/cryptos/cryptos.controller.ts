@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { CryptosService } from 'src/services/cryptos/cryptos.service';
 
 @Controller('cryptos')
@@ -8,6 +8,16 @@ export class CryptosController {
   @Get('tags')
   async getAllTags() {
     return await this.cryptoService.getAllTags();
+  }
+
+  @Get('filters')
+  filterByPrice(@Query() query) {
+    return this.cryptoService.filterByPrice(query);
+  }
+
+  @Get('date')
+  getEnableDate(@Query() query) {
+    return this.cryptoService.getEnableDate(query.cryptoName);
   }
 
   @Get()
@@ -28,11 +38,6 @@ export class CryptosController {
   @Get('search/:search')
   getSearch(@Param() params, @Req() req) {
     return this.cryptoService.algoliaSearch(params.search);
-  }
-
-  @Get('price/:filter')
-  filterByPrice(@Param() params, @Req() req) {
-    return this.cryptoService.filterByPrice(params.filter);
   }
 
   @Get('name/:filter')

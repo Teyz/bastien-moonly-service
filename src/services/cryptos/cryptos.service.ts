@@ -5,7 +5,7 @@ import {
   CryptoPastPrice,
   Percentage,
 } from '../../model/entities/crypto.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { In, QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { map } from 'rxjs/operators';
 import { AlgoliaService } from 'nestjs-algolia';
@@ -134,10 +134,17 @@ export class CryptosService {
     return await index.search(search);
   }
 
-  async filterByPrice(orderBy: 'ASC' | 'DESC') {
+  async filterByPrice(query) {
     return await this.repo.find({
-      order: {
-        current_price: orderBy || 'DESC',
+      // where: { tags: In(query.tags || ['']) },
+      order: { current_price: query.orderBy },
+    });
+  }
+
+  async filterByTags(tags) {
+    return await this.repo.find({
+      where: {
+        tags: tags,
       },
     });
   }
@@ -171,9 +178,18 @@ export class CryptosService {
     const cryptoPercents = crypto.past_price;
     return cryptoPercents.filter((percent) => {
       return (
-        new Date(percent.date).getTime() > new Date(startDate).getTime() &&
-        new Date(percent.date).getTime() < new Date(endDate).getTime()
+        new Date(percent.date).getTime() >= new Date(startDate).getTime() &&
+        new Date(percent.date).getTime() <= new Date(endDate).getTime()
       );
     });
+  }
+
+  async getEnableDate(cryptoName: string) {
+    const crypto: Crypto = await this.repo.findOne({ name: cryptoName });
+    const dateLength = crypto.past_price.length;
+    return {
+      min: crypto.past_price[0].date,
+      max: crypto.past_price[dateLength - 1].date,
+    };
   }
 }
