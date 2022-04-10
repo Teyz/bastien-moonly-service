@@ -41,7 +41,7 @@ export class Crypto {
   @Column({ type: 'boolean', nullable: true })
   isIncrease: boolean;
 
-  @Column('text', { array: true, nullable: true })
+  @Column('text', { array: true })
   tags: string[];
 
   @Column('json', { nullable: true })
