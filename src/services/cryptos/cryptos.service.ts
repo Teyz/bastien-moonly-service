@@ -7,10 +7,8 @@ import {
 } from '../../model/entities/crypto.entity';
 import { In, QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
-import { map } from 'rxjs/operators';
 import { AlgoliaService } from 'nestjs-algolia';
 import axios from 'axios';
-import algoliasearch from 'algoliasearch';
 
 @Injectable()
 export class CryptosService {
