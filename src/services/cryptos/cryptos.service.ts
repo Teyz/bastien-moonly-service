@@ -135,10 +135,23 @@ export class CryptosService {
   }
 
   async filterByPrice(query) {
-    return await this.repo.find({
-      // where: { tags: In(query.tags || ['']) },
-      order: { current_price: query.orderBy },
-    });
+    console.log(query.tags);
+
+    if (query.tags) {
+      return await this.repo
+        .createQueryBuilder('crypto')
+        .where(':tags = ANY (crypto.tags)', { tags: query.tags })
+        // .where('crypto.tags like :tags', {
+        //   tags: `[%"${query.tags}"%]`,
+        // })
+        .orderBy('crypto.current_price', query.orderBy)
+        .getMany();
+    } else {
+      return await this.repo
+        .createQueryBuilder('crypto')
+        .orderBy('crypto.current_price', query.orderBy)
+        .getMany();
+    }
   }
 
   async filterByTags(tags) {
