@@ -12,7 +12,7 @@ export class CryptosController {
 
   @Get('filters')
   filterByPrice(@Query() query) {
-    return this.cryptoService.filterByPrice(query);
+    return this.cryptoService.filter(query);
   }
 
   @Get('date')

@@ -5,10 +5,11 @@ import {
   CryptoPastPrice,
   Percentage,
 } from '../../model/entities/crypto.entity';
-import { In, QueryFailedError, Repository } from 'typeorm';
+import { In, Like, QueryFailedError, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { AlgoliaService } from 'nestjs-algolia';
 import axios from 'axios';
+import { Contains } from 'class-validator';
 
 @Injectable()
 export class CryptosService {
@@ -132,32 +133,30 @@ export class CryptosService {
     return await index.search(search);
   }
 
-  async filterByPrice(query) {
-    console.log(query.tags);
-
+  async filter(query) {
     if (query.tags) {
-      return await this.repo
-        .createQueryBuilder('crypto')
-        .where(':tags = ANY (crypto.tags)', { tags: query.tags })
-        // .where('crypto.tags like :tags', {
-        //   tags: `[%"${query.tags}"%]`,
-        // })
-        .orderBy('crypto.current_price', query.orderBy)
-        .getMany();
-    } else {
-      return await this.repo
-        .createQueryBuilder('crypto')
-        .orderBy('crypto.current_price', query.orderBy)
-        .getMany();
-    }
-  }
+      const tagsArrays = query.tags.split(',');
+      const tags = tagsArrays
+        .map(function (item) {
+          return `%${item}%`;
+        })
+        .toString();
 
-  async filterByTags(tags) {
-    return await this.repo.find({
-      where: {
-        tags: tags,
-      },
-    });
+      return await this.repo.find({
+        where: {
+          tags: Like(tags),
+        },
+        order: {
+          current_price: query.orderBy,
+        },
+      });
+    } else {
+      return await this.repo.find({
+        order: {
+          current_price: query.orderBy,
+        },
+      });
+    }
   }
 
   async filterByName(filter: string) {
