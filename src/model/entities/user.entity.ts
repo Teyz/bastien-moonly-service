@@ -6,11 +6,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Crypto } from './crypto.entity';
+import { UserAlerte } from 'src/user-alerte/entities/user-alerte.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -40,9 +42,16 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   refreshtokenexpires: string;
 
+  @Column({ nullable: true })
+  fcmToken: string;
+
   @ManyToMany(() => Crypto, (crypto: Crypto) => crypto.users)
   @JoinTable()
   public bookmarkedCryptos: Crypto[];
+
+  @OneToMany(() => UserAlerte, (userAlerte: UserAlerte) => userAlerte)
+  @JoinTable()
+  public userAlerts: UserAlerte[];
 
   @BeforeInsert()
   async hashPassword() {

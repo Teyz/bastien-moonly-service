@@ -7,6 +7,9 @@ export class CreateUserDto {
   @IsString()
   username: string;
 
+  @IsString()
+  fcmToken?: string;
+
   @IsNotEmpty()
   password: string;
 }

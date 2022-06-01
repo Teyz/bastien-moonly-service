@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { UserAlerte } from 'src/user-alerte/entities/user-alerte.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+  JoinTable,
+} from 'typeorm';
 import { User } from './user.entity';
 
 export interface Percentage {
@@ -49,4 +57,8 @@ export class Crypto {
 
   @ManyToMany(() => User, (user: User) => user.bookmarkedCryptos)
   public users: User[];
+
+  @OneToMany(() => UserAlerte, (userAlerte: UserAlerte) => userAlerte)
+  @JoinTable()
+  public userAlerts: UserAlerte[];
 }

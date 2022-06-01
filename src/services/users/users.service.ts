@@ -10,10 +10,7 @@ import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(Crypto) private readonly cryptoRepo: Repository<Crypto>,
-    private cryptoService: CryptosService,
-  ) {}
+  constructor(private cryptoService: CryptosService) {}
 
   async create(createUserDto: CreateUserDto) {
     const user = await User.create(createUserDto);

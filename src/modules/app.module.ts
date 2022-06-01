@@ -7,6 +7,8 @@ import { CryptoModule } from './cryptos/cryptos.module';
 import { User } from 'src/model/entities/user.entity';
 import { UsersModule } from 'src/modules/users/users.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { UserAlerteModule } from 'src/user-alerte/user-alerte.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const entities = [User];
 
@@ -15,7 +17,9 @@ const entities = [User];
     AuthModule,
     UsersModule,
     CryptoModule,
+    UserAlerteModule,
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
