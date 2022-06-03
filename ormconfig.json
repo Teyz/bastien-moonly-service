@@ -2,8 +2,8 @@
   "type": "postgres",
   "host": "127.0.0.1",
   "port": 5432,
-  "username": "postgres",
-  "password": "bjfc1522!",
+  "username": "bastien",
+  "password": "root",
   "database": "moonly",
   "entities": [
     "dist/**/*.entity.js"

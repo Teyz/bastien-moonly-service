@@ -1,15 +1,10 @@
-import { HttpException, HttpService, Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Crypto,
-  CryptoPastPrice,
-  Percentage,
-} from '../../model/entities/crypto.entity';
-import { In, Like, QueryFailedError, Repository } from 'typeorm';
+import { Crypto, Percentage } from '../../model/entities/crypto.entity';
+import { Like, Repository } from 'typeorm';
 import { CryptoDTO } from 'src/model/dto/crypto.dto';
 import { AlgoliaService } from 'nestjs-algolia';
 import axios from 'axios';
-import { Contains } from 'class-validator';
 
 @Injectable()
 export class CryptosService {
@@ -106,10 +101,7 @@ export class CryptosService {
         await this.update(crypto);
       }
     });
-    return {
-      code: 200,
-      message: 'Database successfully initiated or updated.',
-    };
+    return this.repo.find();
   }
 
   private async isDatabaseInitiated() {

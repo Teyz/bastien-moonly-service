@@ -18,6 +18,6 @@ import { AlgoliaModule } from 'nestjs-algolia';
   ],
   providers: [CryptosService],
   controllers: [CryptosController],
-  exports: [],
+  exports: [CryptosService],
 })
 export class CryptoModule {}
