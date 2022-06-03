@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { UserAlerteService } from './user-alerte.service';
 import { CreateUserAlerteDto } from './dto/create-user-alerte.dto';
@@ -19,10 +20,10 @@ export class UserAlerteController {
     return this.userAlerteService.create(createUserAlerteDto);
   }
 
-  @Get()
-  sendNotification() {
-    return this.userAlerteService.checkAlerts(
-      '0032782f-04f1-429f-a692-462b76bd40b6',
-    );
+  @Get('all/:userId')
+  checkAlerts(@Param() params) {
+    console.log(params.userId);
+
+    return this.userAlerteService.getUserAlerts(params.userId);
   }
 }

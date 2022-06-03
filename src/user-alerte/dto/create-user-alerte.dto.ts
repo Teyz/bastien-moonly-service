@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateUserAlerteDto {
   @IsString()
@@ -7,9 +7,9 @@ export class CreateUserAlerteDto {
   @IsString()
   cryptoId: string;
 
-  @IsNumber()
-  upper_price: number;
+  @IsString()
+  upper_price: string;
 
-  @IsNumber()
-  lower_price: number;
+  @IsString()
+  lower_price: string;
 }

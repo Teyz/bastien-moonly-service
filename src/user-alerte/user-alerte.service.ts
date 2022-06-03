@@ -5,7 +5,7 @@ import { Crypto } from 'src/model/entities/crypto.entity';
 import { Repository } from 'typeorm';
 import { CreateUserAlerteDto } from './dto/create-user-alerte.dto';
 import { UserAlerte } from './entities/user-alerte.entity';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { CryptosService } from 'src/services/cryptos/cryptos.service';
 import * as admin from 'firebase-admin';
 
@@ -21,8 +21,10 @@ export class UserAlerteService {
     const userAlert = new UserAlerte();
     const user = await this.userRepo.findOne(createUserAlerteDto.userId);
     const crypto = await this.cryptoRepo.findOne(createUserAlerteDto.cryptoId);
-    userAlert.upper_price = createUserAlerteDto.upper_price;
-    userAlert.lower_price = createUserAlerteDto.lower_price;
+    console.log(createUserAlerteDto);
+
+    userAlert.upper_price = parseInt(createUserAlerteDto.upper_price);
+    userAlert.lower_price = parseInt(createUserAlerteDto.lower_price);
     userAlert.user = user;
     userAlert.crypto = crypto;
 
@@ -42,6 +44,17 @@ export class UserAlerteService {
     return userAlerts;
   }
 
+  async getUserAlerts(userId: string) {
+    const userAlerts = await UserAlerte.find({
+      where: {
+        user: userId,
+      },
+      relations: ['crypto'],
+    });
+
+    return userAlerts;
+  }
+
   async sendNotification(alert, crypto) {
     const payload = {
       notification: {
@@ -52,8 +65,8 @@ export class UserAlerteService {
     await admin.messaging().sendToDevice(alert.user.fcmToken, payload);
   }
 
-  @Cron('0 * * * *')
-  async handleCron() {
+  @Cron(CronExpression.EVERY_HOUR)
+  async runEveryHour() {
     const cryptos = await this.cryptoService.initCryptoDB();
     cryptos.forEach(async (crypto) => {
       const alertsList = await this.checkAlerts(crypto.id);
