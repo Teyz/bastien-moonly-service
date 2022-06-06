@@ -21,8 +21,6 @@ export class UserAlerteService {
     const userAlert = new UserAlerte();
     const user = await this.userRepo.findOne(createUserAlerteDto.userId);
     const crypto = await this.cryptoRepo.findOne(createUserAlerteDto.cryptoId);
-    console.log(createUserAlerteDto);
-
     userAlert.upper_price = parseInt(createUserAlerteDto.upper_price);
     userAlert.lower_price = parseInt(createUserAlerteDto.lower_price);
     userAlert.user = user;
@@ -53,6 +51,12 @@ export class UserAlerteService {
     });
 
     return userAlerts;
+  }
+
+  async removeAlert(alertId: string) {
+    return await UserAlerte.delete({
+      id: alertId,
+    });
   }
 
   async sendNotification(alert, crypto) {
